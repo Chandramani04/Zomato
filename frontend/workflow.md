@@ -31,3 +31,9 @@ syntax :
         },
     );
 ```
+
+## How to handle file upload in react
+
+1. Create a form with file input
+2. Use FormData to create a form data object
+3. Use axios to send the form data to the backend
