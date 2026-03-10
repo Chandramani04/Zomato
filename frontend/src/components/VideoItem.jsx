@@ -56,6 +56,8 @@ const VideoItem = ({ video }) => {
                   videoId={video.id} 
                   initialLikes={video.likeCount} 
                   initialIsLiked={video.isLiked} 
+                  initialSaves={video.saveCount}
+                  initialIsSaved={video.isSaved}
                 />
             </div>
 

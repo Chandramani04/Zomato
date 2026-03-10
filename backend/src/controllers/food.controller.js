@@ -37,14 +37,18 @@ async function getFoodItems(req,res){
         const foodItems = await foodModel.find();
         let mappedFoodItems = foodItems;
 
-        // If user is logged in, check which items they have liked
+        // If user is logged in, check which items they have liked and saved
         if (req.user) {
             const userLikes = await likesModel.find({ user: req.user._id });
             const likedFoodIds = new Set(userLikes.map(like => like.food.toString()));
+            
+            const userSaves = await saveModel.find({ user: req.user._id });
+            const savedFoodIds = new Set(userSaves.map(save => save.food.toString()));
 
             mappedFoodItems = foodItems.map(item => {
                 const itemObj = item.toObject();
                 itemObj.isLiked = likedFoodIds.has(item._id.toString());
+                itemObj.isSaved = savedFoodIds.has(item._id.toString());
                 return itemObj;
             });
         }
@@ -119,6 +123,10 @@ async function saveFood(req,res){
             user: user._id,
             food: foodId
         });
+        
+        await foodModel.findByIdAndUpdate(foodId, {
+            $inc: { saveCount: -1 }
+        });
 
         return res.status(200).json({
             success: true,
@@ -129,6 +137,10 @@ async function saveFood(req,res){
     const save = await saveModel.create({
         user: user._id,
         food: foodId
+    });
+
+    await foodModel.findByIdAndUpdate(foodId, {
+        $inc: { saveCount: 1 }
     });
 
     res.status(200).json({

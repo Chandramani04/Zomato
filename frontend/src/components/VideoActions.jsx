@@ -21,10 +21,10 @@ const MessageIcon = () => (
   </svg>
 );
 
-const VideoActions = ({ videoId, initialLikes = 23, initialIsLiked = false, initialSaves = 23, initialComments = 45 }) => {
+const VideoActions = ({ videoId, initialLikes = 23, initialIsLiked = false, initialSaves = 23, initialIsSaved = false, initialComments = 45 }) => {
     // Local state for UI feedback. Will be replaced by real API calls later
     const [isLiked, setIsLiked] = useState(initialIsLiked);
-    const [isSaved, setIsSaved] = useState(false);
+    const [isSaved, setIsSaved] = useState(initialIsSaved);
     const [likesCount, setLikesCount] = useState(initialLikes);
     const [savesCount, setSavesCount] = useState(initialSaves);
 
@@ -56,11 +56,32 @@ const VideoActions = ({ videoId, initialLikes = 23, initialIsLiked = false, init
         }
     };
 
-    const handleSave = (e) => {
+    const handleSave = async (e) => {
         e.stopPropagation();
-        setIsSaved(!isSaved);
-        setSavesCount(prev => isSaved ? prev - 1 : prev + 1);
-        // API call to save video would go here
+        
+        // Optimistic UI Update
+        const newIsSaved = !isSaved;
+        setIsSaved(newIsSaved);
+        setSavesCount(prev => newIsSaved ? prev + 1 : prev - 1);
+        
+        try {
+            const response = await axios.post(
+                'http://localhost:3000/api/food/save',
+                { foodId: videoId },
+                { withCredentials: true } 
+            );
+            
+            // If the backend fails unexpectedly but returns 200 OK
+            if (response.data && !response.data.success) {
+                setIsSaved(!newIsSaved);
+                setSavesCount(prev => !newIsSaved ? prev + 1 : prev - 1);
+            }
+        } catch (error) {
+            console.error("Error updating save status:", error);
+            // Revert optimistic update on error
+            setIsSaved(!newIsSaved);
+            setSavesCount(prev => !newIsSaved ? prev + 1 : prev - 1);
+        }
     };
 
     const handleComment = (e) => {
