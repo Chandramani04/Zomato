@@ -14,9 +14,13 @@ const upload = multer({
 /* POST  /api/food/ [protected] */
 router.post("/", authMiddleware.authFoodPartnerMiddleware, upload.single("video"), foodController.createFood);
 /* GET /api/food/ [protected]  */
-// this api will show all the food items available in the database to the USER 
-router.get("/",authMiddleware.authUserMiddleware,foodController.getFoodItems)
+// this api will show all the food items available in the database to anyone logged in 
+router.get("/",authMiddleware.authGeneralMiddleware,foodController.getFoodItems)
  
+router.get("/saved",authMiddleware.authUserMiddleware,foodController.getSavedFoodItems);
+
+// delete a food clip
+router.delete("/:id", authMiddleware.authFoodPartnerMiddleware, foodController.deleteFood);
 
 router.post("/like",authMiddleware.authUserMiddleware,foodController.likeFood); 
 // when user clicks on like button this api will be called 

@@ -4,7 +4,7 @@ import BottomNav from './BottomNav';
 import '../styles/VideoFeed.css';
 import axios from 'axios';
 
-const VideoFeed = () => {
+const VideoFeed = ({ endpoint = 'http://localhost:3000/api/food/' }) => {
     const [videos, setVideos] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -12,7 +12,7 @@ const VideoFeed = () => {
     useEffect(() => {
         const fetchVideos = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/api/food/', {
+                const response = await axios.get(endpoint, {
                     withCredentials: true // Required to send the auth cookie
                 });
 
@@ -39,7 +39,7 @@ const VideoFeed = () => {
         };
 
         fetchVideos();
-    }, []);
+    }, [endpoint]);
 
     if (loading) {
         return <div style={{ color: "white", height: "100vh", display: "flex", justifyContent: "center", alignItems: "center" }}>Loading amazing videos...</div>;

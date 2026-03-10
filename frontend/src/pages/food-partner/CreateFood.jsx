@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import '../../styles/CreateFood.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import BottomNav from '../../components/BottomNav';
 
 const CreateFood = () => {
   const navigate = useNavigate();
   const [foodDetails, setFoodDetails] = useState({
     name: '',
     description: '',
+    price: '',
     video: null
   });
   const [previewUrl, setPreviewUrl] = useState(null);
@@ -61,6 +63,7 @@ const CreateFood = () => {
     const formData = new FormData();
     formData.append('name', foodDetails.name);
     formData.append('description', foodDetails.description);
+    formData.append('price', foodDetails.price);
     formData.append('video', foodDetails.video);
 
     try {
@@ -116,6 +119,20 @@ const CreateFood = () => {
             />
           </div>
 
+          <div className="form-group">
+            <label htmlFor="price">Price (₹)</label>
+            <input
+              type="number"
+              id="price"
+              name="price"
+              placeholder="e.g. 299"
+              value={foodDetails.price}
+              onChange={handleInputChange}
+              required
+              min="0"
+            />
+          </div>
+
           <div className="form-group file-upload-group">
             <label className="file-upload-label-text">Recipe Video</label>
 
@@ -161,6 +178,7 @@ const CreateFood = () => {
           </button>
         </form>
       </div>
+      <BottomNav />
     </div>
   );
 };

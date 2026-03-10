@@ -5,6 +5,7 @@ const cookieParser = require("cookie-parser");
 const authRoutes = require("./routes/auth.routes");
 const foodRoutes = require("./routes/food.routes");
 const foodPartnerRoutes = require("./routes/food-partner.routes");
+const cartRoutes = require("./routes/cart.routes");
 const cors = require("cors");
 
 // middlewares 
@@ -21,6 +22,7 @@ app.get("/", (req, res) => {
 app.use("/api/auth", authRoutes); // add a prefix and redirect to routes present in authRoutes
 app.use("/api/food", foodRoutes);
 app.use("/api/food-partner", foodPartnerRoutes);
+app.use("/api/cart", cartRoutes);
 
 // we created server in app.js but will start it in server.js , so we export app
 module.exports = app;

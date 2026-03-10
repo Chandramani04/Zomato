@@ -14,6 +14,9 @@ router.post("/foodpartner/register", authController.registerFoodPartner);
 router.post("/foodpartner/login", authController.loginFoodPartner);
 router.get("/foodpartner/logout", authController.logoutFoodPartner);
 
+// general auth routes
+router.get("/me", authController.getMe);
+
 
 
 module.exports = router;    

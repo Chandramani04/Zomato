@@ -23,8 +23,6 @@ const UserRegister = () => {
             },
         );
         console.log(response.data);
-
-        
         // once registered , redirect to home page 
         navigate("/");  
     };

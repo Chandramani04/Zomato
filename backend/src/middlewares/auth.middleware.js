@@ -67,4 +67,30 @@ async function authUserMiddleware(req,res,next){
     }
 }
 
-module.exports = {authFoodPartnerMiddleware, authUserMiddleware};
+async function authGeneralMiddleware(req,res,next){
+    const token = req.cookies.token;
+    if(!token){
+        return res.status(401).json({message: "Please login first"});
+    }
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        
+        const userDocument = await userModel.findById(decoded.id);
+        if(userDocument){
+            req.user = userDocument;
+            return next();
+        }
+        
+        const foodPartnerDocument = await foodPartnerModel.findById(decoded.id);
+        if(foodPartnerDocument){
+            req.foodPartner = foodPartnerDocument;
+            return next();
+        }
+
+        return res.status(401).json({message: "Unauthorized"});
+    } catch (error) {
+        return res.status(401).json({message: "Unauthorized"});
+    }
+}
+
+module.exports = {authFoodPartnerMiddleware, authUserMiddleware, authGeneralMiddleware};

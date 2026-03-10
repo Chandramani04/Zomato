@@ -15,13 +15,15 @@ const BookmarkIcon = ({ filled }) => (
   </svg>
 );
 
-const MessageIcon = () => (
+const CartIcon = () => (
   <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path>
+    <circle cx="9" cy="21" r="1"></circle>
+    <circle cx="20" cy="21" r="1"></circle>
+    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
   </svg>
 );
 
-const VideoActions = ({ videoId, initialLikes = 23, initialIsLiked = false, initialSaves = 23, initialIsSaved = false, initialComments = 45 }) => {
+const VideoActions = ({ videoId, initialLikes = 23, initialIsLiked = false, initialSaves = 23, initialIsSaved = false }) => {
     // Local state for UI feedback. Will be replaced by real API calls later
     const [isLiked, setIsLiked] = useState(initialIsLiked);
     const [isSaved, setIsSaved] = useState(initialIsSaved);
@@ -84,10 +86,21 @@ const VideoActions = ({ videoId, initialLikes = 23, initialIsLiked = false, init
         }
     };
 
-    const handleComment = (e) => {
+    const handleAddToCart = async (e) => {
         e.stopPropagation();
-        // Open comments modal logic
-        console.log("Open comments for", videoId);
+        try {
+            const response = await axios.post(
+                'http://localhost:3000/api/cart/add',
+                { foodId: videoId },
+                { withCredentials: true }
+            );
+            if (response.data && response.data.success) {
+                // Could dispatch to a global state store or show toast!
+                console.log("Added to cart!");
+            }
+        } catch (error) {
+            console.error("Failed to add to cart:", error);
+        }
     };
 
     return (
@@ -106,11 +119,11 @@ const VideoActions = ({ videoId, initialLikes = 23, initialIsLiked = false, init
                 <span className="action-text">Save : {savesCount === 0 ? '0' : savesCount}</span>
             </div>
 
-            <div className="action-button-group" onClick={handleComment}>
+            <div className="action-button-group" onClick={handleAddToCart}>
                 <div className="icon-wrapper">
-                    <MessageIcon />
+                    <CartIcon />
                 </div>
-                <span className="action-text">Comment:{initialComments}</span>
+                <span className="action-text">Add to Cart</span>
             </div>
         </div>
     );

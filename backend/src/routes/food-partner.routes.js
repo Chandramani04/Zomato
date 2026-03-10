@@ -8,7 +8,14 @@ const authMiddleware = require("../middlewares/auth.middleware");
 
 // show all the food items posted by a specific food partner to the user
 /* GET /api/food-partner/:id [protected] */
-router.get("/:id",authMiddleware.authUserMiddleware,foodPartnerController.getFoodPartnerById)
+router.get("/:id",authMiddleware.authGeneralMiddleware,foodPartnerController.getFoodPartnerById)
 
+const multer = require("multer"); 
+const upload = multer({
+    storage:multer.memoryStorage()
+});
+
+// Update the avatar for a food partner
+router.put("/avatar", authMiddleware.authFoodPartnerMiddleware, upload.single("avatar"), foodPartnerController.updateAvatar);
 
 module.exports = router;     

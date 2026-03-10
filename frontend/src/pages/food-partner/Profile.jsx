@@ -10,7 +10,80 @@ const Profile = () => {
     const [profile, setProfile] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [selectedFood, setSelectedFood] = useState(null);
     const videoRefs = useRef({});
+
+    const [loggedInRole, setLoggedInRole] = useState(null);
+    const [loggedInPartnerId, setLoggedInPartnerId] = useState(null);
+
+    useEffect(() => {
+        const fetchAuthStatus = async () => {
+            try {
+                const res = await axios.get('http://localhost:3000/api/auth/me', { withCredentials: true });
+                setLoggedInRole(res.data.role);
+                setLoggedInPartnerId(res.data.id);
+            } catch {
+                // User is not authenticated or not a partner, do nothing
+            }
+        };
+        fetchAuthStatus();
+    }, []);
+
+    const isOwnProfile = loggedInRole === "partner" && id === loggedInPartnerId;
+
+    const handleReelClick = (item) => {
+        // Pause background grid videos
+        Object.values(videoRefs.current).forEach((video) => {
+            if (video && !video.paused) {
+                video.pause();
+            }
+        });
+        setSelectedFood(item);
+    };
+
+    const closeModal = () => {
+        setSelectedFood(null);
+    };
+
+    const handleAvatarChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("avatar", file);
+
+        try {
+            const response = await axios.put('http://localhost:3000/api/food-partner/avatar', formData, {
+                withCredentials: true,
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+            if (response.data.success) {
+                setProfile(prev => ({ ...prev, avatar: response.data.avatar }));
+            }
+        } catch (error) {
+            console.error("Failed to upload avatar", error);
+            alert("Failed to upload avatar");
+        }
+    };
+
+    const handleDeleteReel = async (foodId) => {
+        if (!window.confirm("Are you sure you want to delete this reel?")) return;
+        try {
+            const response = await axios.delete(`http://localhost:3000/api/food/${foodId}`, {
+                withCredentials: true
+            });
+            if (response.data.success) {
+                setProfile(prev => ({
+                    ...prev,
+                    foodItems: prev.foodItems.filter(item => item._id !== foodId),
+                    totalMeals: Math.max(0, (prev.totalMeals || 0) - 1)
+                }));
+            }
+        } catch (error) {
+            console.error("Failed to delete reel", error);
+            alert("Failed to delete reel");
+        }
+    };
 
     useEffect(() => {
         const fetchProfile = async () => {
@@ -72,6 +145,14 @@ const Profile = () => {
                             src={profile.avatar || "https://placehold.co/150x150/ef4f5f/ffffff?text=Avatar"}
                             alt={`${profile.name || 'Partner'} avatar`}
                         />
+                        {isOwnProfile && (
+                            <div className="avatar-edit-overlay" onClick={() => document.getElementById('avatar-upload').click()}>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+                                </svg>
+                            </div>
+                        )}
+                        <input type="file" id="avatar-upload" style={{display: 'none'}} accept="image/*" onChange={handleAvatarChange} />
                     </div>
 
                     <div className="profile-details">
@@ -106,8 +187,19 @@ const Profile = () => {
                     {profile.foodItems && profile.foodItems.length > 0 ? (
                         profile.foodItems.map((item) => (
                             <div key={item._id} className="reel-card">
-                                {/* Thumbnail Placeholder */}
                                 <div className="reel-thumbnail" style={{ backgroundImage: `url(${item.thumbnail || 'https://placehold.co/300x533/1a1a1a/ffffff?text=Food+Reel'})` }}>
+                                    {isOwnProfile && (
+                                        <button 
+                                            className="reel-delete-btn" 
+                                            onClick={(e) => { e.stopPropagation(); handleDeleteReel(item._id); }}
+                                            aria-label="Delete video"
+                                        >
+                                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                                <path d="M3 6h18"></path>
+                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                            </svg>
+                                        </button>
+                                    )}
                                     <video
                                         ref={(el) => (videoRefs.current[item._id] = el)}
                                         className="reel-video"
@@ -116,21 +208,7 @@ const Profile = () => {
                                         muted
                                         loop
                                         playsInline
-                                        onClick={(e) => {
-                                            if (e.target.paused) {
-                                                // Pause all other videos first
-                                                Object.values(videoRefs.current).forEach((video) => {
-                                                    if (video && video !== e.target && !video.paused) {
-                                                        video.pause();
-                                                    }
-                                                });
-
-                                                e.target.muted = false; // Unmute sound when played
-                                                e.target.play().catch(() => { });
-                                            } else {
-                                                e.target.pause();
-                                            }
-                                        }}
+                                        onClick={() => handleReelClick(item)}
                                     />
                                     <div className="reel-overlay" style={{ pointerEvents: 'none' }}>
                                         <div className="play-icon">
@@ -166,6 +244,30 @@ const Profile = () => {
                     )}
                 </div>
             </div>
+
+            {/* Food Details Modal */}
+            {selectedFood && (
+                <div className="food-details-modal-overlay" onClick={closeModal}>
+                    <div className="food-details-modal-content" onClick={e => e.stopPropagation()}>
+                        <button className="modal-close-btn" onClick={closeModal} aria-label="Close modal">✕</button>
+                        <div className="modal-video-container">
+                            <video 
+                                src={selectedFood.video} 
+                                autoPlay 
+                                controls 
+                                playsInline 
+                            />
+                        </div>
+                        <div className="modal-info-container">
+                            <h2 className="modal-food-name">{selectedFood.name || "Delicious Food"}</h2>
+                            <p className="modal-price">₹{selectedFood.price || 0}</p>
+                            <p className="modal-description">
+                                {selectedFood.description || "No description provided."}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

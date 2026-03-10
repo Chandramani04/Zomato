@@ -27,6 +27,35 @@ const getFoodPartnerById = async (req, res) => {
     }
 }
 
+const { uploadFile } = require("../storage/service");
+const { v4: uuidv4 } = require("uuid");
+
+const updateAvatar = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: "Please upload an image for the avatar." });
+        }
+
+        const fileUploadResponse = await uploadFile(req.file.buffer, uuidv4());
+        
+        const foodPartnerId = req.foodPartner._id;
+        const updatedPartner = await foodPartnerModel.findByIdAndUpdate(
+            foodPartnerId,
+            { avatar: fileUploadResponse.url },
+            { new: true }
+        );
+
+        res.status(200).json({
+            success: true,
+            message: "Avatar updated successfully",
+            avatar: updatedPartner.avatar
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: error.message });
+    }
+};
+
 module.exports = {
-    getFoodPartnerById
+    getFoodPartnerById,
+    updateAvatar
 }

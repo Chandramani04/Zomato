@@ -149,5 +149,29 @@ async function logoutFoodPartner(req,res){
     res.status(200).json({message: "Food partner logged out successfully"});
 }
 
+async function getMe(req, res) {
+    const token = req.cookies.token;
+    if (!token) {
+        return res.status(401).json({ message: "Unauthorized", role: null, id: null });
+    }
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        
+        const userDocument = await userModel.findById(decoded.id);
+        if (userDocument) {
+            return res.status(200).json({ role: 'user', id: userDocument._id });
+        }
+        
+        const foodPartnerDocument = await foodPartnerModel.findById(decoded.id);
+        if (foodPartnerDocument) {
+            return res.status(200).json({ role: 'partner', id: foodPartnerDocument._id });
+        }
 
-module.exports = {registerUser,loginUser,logoutUser,registerFoodPartner,loginFoodPartner,logoutFoodPartner };
+        return res.status(401).json({ message: "Unauthorized", role: null, id: null });
+    } catch (error) {
+        return res.status(401).json({ message: "Unauthorized", role: null, id: null });
+    }
+}
+
+
+module.exports = {registerUser,loginUser,logoutUser,registerFoodPartner,loginFoodPartner,logoutFoodPartner,getMe };
