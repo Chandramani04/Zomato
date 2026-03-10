@@ -26,7 +26,7 @@ const UserRegister = () => {
 
         
         // once registered , redirect to home page 
-        navigate("/create-food");  
+        navigate("/");  
     };
 
     return (

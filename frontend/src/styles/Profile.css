@@ -3,9 +3,6 @@
 /* Full screen responsive container */
 .profile-container {
   min-height: 100vh;
-  /* Add height: 100vh so that overflow-y: auto takes effect 
-     when content overflows the screen size */
-  height: 100vh;
   background-color: var(--bg-color);
   color: var(--text-primary);
   padding: 2rem;
@@ -14,8 +11,6 @@
   align-items: center;
   box-sizing: border-box;
   font-family: inherit;
-  overflow-y: auto;
-  overflow-x: hidden;
 }
 
 /* Loading and Error States */

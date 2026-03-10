@@ -48,13 +48,13 @@ async function loginUser(req,res){
     // check if user exists 
     const user = await userModel.findOne({email});
     if(!user){
-        return res.status(400).json({message: "Invalid credentials"});
+        return res.status(400).json({message: "user doesn't exists"});
     }
 
     // check if password is correct 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
     if(!isPasswordCorrect){
-        return res.status(400).json({message: "Invalid credentials"});
+        return res.status(400).json({message: "incorrect passwords"});
     }
 
     // now user is verified , create token and store it in cookie 

@@ -18,5 +18,11 @@ router.post("/", authMiddleware.authFoodPartnerMiddleware, upload.single("video"
 router.get("/",authMiddleware.authUserMiddleware,foodController.getFoodItems)
  
 
+router.post("/like",authMiddleware.authUserMiddleware,foodController.likeFood); 
+// when user clicks on like button this api will be called 
+// it will add the food item to the user's liked food items 
+
+router.post("/save",authMiddleware.authUserMiddleware,foodController.saveFood);
+
 
 module.exports = router;    

@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from 'react';
 import useElementOnScreen from '../hooks/useElementOnScreen';
 import { useNavigate } from 'react-router-dom';
+import VideoActions from './VideoActions';
 
 const VideoItem = ({ video }) => {
     const navigate = useNavigate();
@@ -49,6 +50,10 @@ const VideoItem = ({ video }) => {
                 autoPlay
                 preload='metadata'
             />
+
+            <div className="video-actions-wrapper">
+                <VideoActions videoId={video.id} />
+            </div>
 
             <div className="video-overlay">
                 <p className="video-description">{video.description}</p>

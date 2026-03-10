@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import VideoItem from './VideoItem';
+import BottomNav from './BottomNav';
 import '../styles/VideoFeed.css';
 import axios from 'axios';
 
@@ -16,6 +17,7 @@ const VideoFeed = () => {
                 });
 
                 if (response.data && response.data.success) {
+                    console.log(response.data);
                     const mappedVideos = response.data.foodItems.map(item => ({
                         id: item._id,
                         url: item.video,
@@ -52,6 +54,7 @@ const VideoFeed = () => {
             {videos.map((video) => (
                 <VideoItem key={video.id} video={video} />
             ))}
+            <BottomNav />
         </div>
     );
 };
