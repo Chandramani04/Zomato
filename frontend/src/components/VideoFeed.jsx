@@ -23,7 +23,9 @@ const VideoFeed = () => {
                         url: item.video,
                         description: item.description,
                         storeUrl: `/food-partner/${item.foodPartner}`,
-                        name: item.name
+                        name: item.name,
+                        likeCount: item.likeCount || 0,
+                        isLiked: item.isLiked || false
                     }));
                     setVideos(mappedVideos);
                 }

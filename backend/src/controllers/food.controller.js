@@ -35,10 +35,24 @@ async function createFood(req,res){
 async function getFoodItems(req,res){
     try {
         const foodItems = await foodModel.find();
+        let mappedFoodItems = foodItems;
+
+        // If user is logged in, check which items they have liked
+        if (req.user) {
+            const userLikes = await likesModel.find({ user: req.user._id });
+            const likedFoodIds = new Set(userLikes.map(like => like.food.toString()));
+
+            mappedFoodItems = foodItems.map(item => {
+                const itemObj = item.toObject();
+                itemObj.isLiked = likedFoodIds.has(item._id.toString());
+                return itemObj;
+            });
+        }
+
         res.status(200).json({
             success: true,
             message: "Food items fetched successfully",
-            foodItems
+            foodItems: mappedFoodItems
         });
     } catch (error) {
         res.status(500).json({
@@ -47,7 +61,6 @@ async function getFoodItems(req,res){
             error: error.message
         });
     }
-    
 }
 
 async function likeFood(req,res){

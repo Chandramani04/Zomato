@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import '../styles/VideoActions.css';
 
 // Inline SVGs for no dependencies
@@ -20,19 +21,39 @@ const MessageIcon = () => (
   </svg>
 );
 
-const VideoActions = ({ videoId, initialLikes = 23, initialSaves = 23, initialComments = 45 }) => {
+const VideoActions = ({ videoId, initialLikes = 23, initialIsLiked = false, initialSaves = 23, initialComments = 45 }) => {
     // Local state for UI feedback. Will be replaced by real API calls later
-    const [isLiked, setIsLiked] = useState(false);
+    const [isLiked, setIsLiked] = useState(initialIsLiked);
     const [isSaved, setIsSaved] = useState(false);
     const [likesCount, setLikesCount] = useState(initialLikes);
     const [savesCount, setSavesCount] = useState(initialSaves);
 
-    const handleLike = (e) => {
+    const handleLike = async (e) => {
         e.stopPropagation();
-        setIsLiked(!isLiked);
-        setLikesCount(prev => isLiked ? prev - 1 : prev + 1);
-        // API call to like video would go here
         
+        // Optimistic UI Update
+        const newIsLiked = !isLiked;
+        setIsLiked(newIsLiked);
+        setLikesCount(prev => newIsLiked ? prev + 1 : prev - 1);
+        
+        try {
+            const response = await axios.post(
+                'http://localhost:3000/api/food/like',
+                { foodId: videoId },
+                { withCredentials: true } // Need this for the auth token
+            );
+            
+            // If the backend fails unexpectedly but returns 200 OK
+            if (response.data && !response.data.success) {
+                setIsLiked(!newIsLiked);
+                setLikesCount(prev => !newIsLiked ? prev + 1 : prev - 1);
+            }
+        } catch (error) {
+            console.error("Error updating like status:", error);
+            // Revert optimistic update on error
+            setIsLiked(!newIsLiked);
+            setLikesCount(prev => !newIsLiked ? prev + 1 : prev - 1);
+        }
     };
 
     const handleSave = (e) => {

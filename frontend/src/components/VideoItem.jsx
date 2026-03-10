@@ -52,7 +52,11 @@ const VideoItem = ({ video }) => {
             />
 
             <div className="video-actions-wrapper">
-                <VideoActions videoId={video.id} />
+                <VideoActions 
+                  videoId={video.id} 
+                  initialLikes={video.likeCount} 
+                  initialIsLiked={video.isLiked} 
+                />
             </div>
 
             <div className="video-overlay">
