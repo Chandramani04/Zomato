@@ -17,7 +17,9 @@ const FoodPartnerLogin = () => {
             withCredentials: true
         });
         console.log(response.data);
-        navigate('/create-food');
+        if (response.data && response.data._id) {
+            navigate(`/food-partner/${response.data._id}`);
+        }
     }
     return (
         <div className="auth-container">

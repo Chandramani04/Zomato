@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import useAuth from '../hooks/useAuth';
 import '../styles/BottomNav.css';
 
 // Inline SVGs 
@@ -43,27 +44,7 @@ const LogoutIcon = ({ active }) => (
 const BottomNav = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const [role, setRole] = useState(null);
-
-    useEffect(() => {
-        const fetchRole = async () => {
-            try {
-                // Adding timestamp query to prevent caching, just in case
-                const res = await fetch(`http://localhost:3000/api/auth/me?t=${new Date().getTime()}`, {
-                    credentials: 'include'
-                });
-                if (res.ok) {
-                    const data = await res.json();
-                    setRole(data.role);
-                } else {
-                    setRole(null);
-                }
-            } catch {
-                setRole(null);
-            }
-        };
-        fetchRole();
-    }, [location.pathname]);
+    const { authData: { role }, logout } = useAuth();
 
     // Check if current path matches
     const isHome = location.pathname === '/';
@@ -72,12 +53,11 @@ const BottomNav = () => {
     const isUpload = location.pathname === '/create-food';
 
     const handleLogout = async () => {
-        try {
-            await fetch('http://localhost:3000/api/auth/foodpartner/logout');
-            setRole(null);
+        await logout();
+        if (role === 'partner') {
             navigate('/food-partner/login');
-        } catch (error) {
-            console.error(error);
+        } else {
+            navigate('/user/login');
         }
     };
 
@@ -125,6 +105,14 @@ const BottomNav = () => {
                     >
                         <CartIcon active={isCart} />
                         <span className="nav-text">cart</span>
+                    </div>
+
+                    <div 
+                        className="nav-item"
+                        onClick={handleLogout}
+                    >
+                        <LogoutIcon active={false} />
+                        <span className="nav-text">logout</span>
                     </div>
                 </>
             )}

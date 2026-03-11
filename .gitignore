@@ -1,2 +1,4 @@
 node_modules
 .agents
+workflow.md
+/frontend/workflow.md

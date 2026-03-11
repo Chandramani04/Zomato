@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../../styles/Profile.css';
+import BottomNav from '../../components/BottomNav';
 
 const Profile = () => {
     const { id } = useParams();
@@ -224,23 +225,21 @@ const Profile = () => {
                             </div>
                         ))
                     ) : (
-                        // Placeholder Reels Display
-                        Array.from({ length: 4 }).map((_, index) => (
-                            <div key={index} className="reel-card">
-                                <div className="reel-thumbnail" style={{ backgroundImage: `url(https://placehold.co/300x533/1a1a1a/ffffff?text=Reel+${index + 1})` }}>
-                                    <div className="reel-overlay">
-                                        <div className="play-icon">
-                                            <svg width="48" height="48" viewBox="0 0 24 24" fill="white">
-                                                <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                                            </svg>
-                                        </div>
-                                    </div>
-                                    <div className="reel-info">
-                                        <h3 className="reel-title">Delicious Food {index + 1}</h3>
-                                    </div>
-                                </div>
-                            </div>
-                        ))
+                        <div className="empty-reels-state" style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px 20px', color: '#888' }}>
+                            {isOwnProfile ? (
+                                <>
+                                    <p>You haven't uploaded any reels yet.</p>
+                                    <button 
+                                        onClick={() => navigate('/create-food')}
+                                        style={{ marginTop: '10px', padding: '8px 16px', background: '#ef4f5f', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                                    >
+                                        Upload your first reel
+                                    </button>
+                                </>
+                            ) : (
+                                <p>No reels have been uploaded yet.</p>
+                            )}
+                        </div>
                     )}
                 </div>
             </div>
@@ -264,10 +263,43 @@ const Profile = () => {
                             <p className="modal-description">
                                 {selectedFood.description || "No description provided."}
                             </p>
+                            {loggedInRole === 'user' && (
+                                <button 
+                                    className="btn-add-to-cart" 
+                                    style={{
+                                        width: '100%',
+                                        marginTop: '15px',
+                                        padding: '12px',
+                                        backgroundColor: '#ef4f5f',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '8px',
+                                        fontSize: '16px',
+                                        fontWeight: 'bold',
+                                        cursor: 'pointer'
+                                    }}
+                                    onClick={async () => {
+                                        try {
+                                            const res = await axios.post('http://localhost:3000/api/cart/add', {
+                                                foodId: selectedFood._id
+                                            }, { withCredentials: true });
+                                            if (res.data.success) {
+                                                alert("Added to cart!");
+                                            }
+                                        } catch (err) {
+                                            console.error("Cart error:", err);
+                                            alert("Failed to add to cart");
+                                        }
+                                    }}
+                                >
+                                    Add to Cart
+                                </button>
+                            )}
                         </div>
                     </div>
                 </div>
             )}
+            <BottomNav />
         </div>
     );
 };

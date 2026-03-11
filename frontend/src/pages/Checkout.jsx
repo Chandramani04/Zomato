@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../styles/Checkout.css';
 
@@ -10,6 +11,7 @@ const TrashIcon = () => (
 );
 
 const Checkout = () => {
+    const navigate = useNavigate();
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -78,7 +80,18 @@ const Checkout = () => {
     return (
         <div className="checkout-container">
             <div className="checkout-inner">
-                <div className="checkout-header-center">
+                <div className="checkout-header-center" style={{ position: 'relative' }}>
+                    <button 
+                        className="back-button" 
+                        onClick={() => navigate(-1)} 
+                        aria-label="Go back"
+                        style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'white', cursor: 'pointer', padding: '8px' }}
+                    >
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                        </svg>
+                    </button>
                 <h1>Your Food Cart</h1>
                 <p>Review your items and proceed to checkout</p>
             </div>
@@ -100,6 +113,23 @@ const Checkout = () => {
                                     <h3 className="cart-item-title">{item.food?.name}</h3>
                                     <p className="cart-item-subtitle">{item.food?.name}</p>
                                     <span className="cart-item-price">₹{item.food?.price || 0}</span>
+                                    <button 
+                                        className="visit-store-btn-cart" 
+                                        onClick={() => navigate(`/food-partner/${item.food?.foodPartner}`)}
+                                        style={{ 
+                                            display: 'block', 
+                                            marginTop: '8px',
+                                            padding: '4px 12px',
+                                            backgroundColor: '#ef4f5f',
+                                            color: 'white',
+                                            border: 'none',
+                                            borderRadius: '4px',
+                                            cursor: 'pointer',
+                                            fontSize: '12px'
+                                        }}
+                                    >
+                                        Visit Store
+                                    </button>
                                 </div>
                                 <button className="delete-btn" onClick={() => handleRemove(item._id)} aria-label="Remove item">
                                     <TrashIcon />

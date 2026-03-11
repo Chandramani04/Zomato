@@ -4,15 +4,15 @@
   left: 0;
   width: 100%;
   height: 60px;
-  background-color: transparent; /* Match reference, or solid color if preferred */
+  background-color: #121212; /* Solid dark background */
   display: flex;
   justify-content: space-around;
   align-items: center;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
-  z-index: 100;
-  padding-bottom: env(safe-area-inset-bottom); /* iOS safe area */
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 1000; /* Ensure it stays above other content */
+  padding-bottom: env(safe-area-inset-bottom);
   color: white;
-  pointer-events: auto; /* Essential if placed over a full-screen feed */
+  pointer-events: auto;
 }
 
 .nav-item {
