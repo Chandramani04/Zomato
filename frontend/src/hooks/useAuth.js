@@ -12,7 +12,7 @@ const useAuth = () => {
     useEffect(() => {
         const checkAuthStatus = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/api/auth/me', {
+                const response = await axios.get('/api/auth/me', {
                     withCredentials: true
                 });
                 if (response.status === 200 && response.data.role) {
@@ -46,8 +46,8 @@ const useAuth = () => {
     const logout = async () => {
         try {
             const endpoint = authData.role === 'partner' 
-                ? 'http://localhost:3000/api/auth/foodpartner/logout'
-                : 'http://localhost:3000/api/auth/user/logout';
+                ? '/api/auth/foodpartner/logout'
+                : '/api/auth/user/logout';
             
             await axios.get(endpoint, {
                 withCredentials: true

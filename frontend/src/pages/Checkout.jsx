@@ -19,7 +19,7 @@ const Checkout = () => {
     useEffect(() => {
         const fetchCart = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/api/cart', {
+                const response = await axios.get('/api/cart', {
                     withCredentials: true
                 });
 
@@ -45,7 +45,7 @@ const Checkout = () => {
 
     const handleRemove = async (itemId) => {
         try {
-            const response = await axios.delete(`http://localhost:3000/api/cart/remove/${itemId}`, {
+            const response = await axios.delete(`/api/cart/remove/${itemId}`, {
                 withCredentials: true
             });
             if (response.data?.success) {
@@ -58,7 +58,7 @@ const Checkout = () => {
 
     const handleClearCart = async () => {
         try {
-            const response = await axios.delete('http://localhost:3000/api/cart/clear', {
+            const response = await axios.delete('/api/cart/clear', {
                 withCredentials: true
             });
             if (response.data?.success) {

@@ -12,7 +12,7 @@ const UserLogin = () => {
         const password = e.target.password.value;
 
         const response = await axios.post(
-            "http://localhost:3000/api/auth/user/login",
+            "/api/auth/user/login",
             {
                 email,
                 password,

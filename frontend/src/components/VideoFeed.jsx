@@ -5,7 +5,7 @@ import BottomNav from './BottomNav';
 import '../styles/VideoFeed.css';
 import axios from 'axios';
 
-const VideoFeed = ({ endpoint = 'http://localhost:3000/api/food/', isSavedView = false }) => {
+const VideoFeed = ({ endpoint = '/api/food/', isSavedView = false }) => {
     const navigate = useNavigate();
     const [videos, setVideos] = useState([]);
     const [loading, setLoading] = useState(true);

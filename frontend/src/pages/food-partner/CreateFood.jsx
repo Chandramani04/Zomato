@@ -68,7 +68,7 @@ const CreateFood = () => {
 
     try {
       const response = await axios.post(
-        'http://localhost:3000/api/food',
+        '/api/food',
         formData,
         {
           withCredentials: true,

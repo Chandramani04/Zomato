@@ -40,7 +40,7 @@ const VideoActions = ({ videoId, initialLikes = 23, initialIsLiked = false, init
         
         try {
             const response = await axios.post(
-                'http://localhost:3000/api/food/like',
+                '/api/food/like',
                 { foodId: videoId },
                 { withCredentials: true } // Need this for the auth token
             );
@@ -68,7 +68,7 @@ const VideoActions = ({ videoId, initialLikes = 23, initialIsLiked = false, init
         
         try {
             const response = await axios.post(
-                'http://localhost:3000/api/food/save',
+                '/api/food/save',
                 { foodId: videoId },
                 { withCredentials: true } 
             );
@@ -90,7 +90,7 @@ const VideoActions = ({ videoId, initialLikes = 23, initialIsLiked = false, init
         e.stopPropagation();
         try {
             const response = await axios.post(
-                'http://localhost:3000/api/cart/add',
+                '/api/cart/add',
                 { foodId: videoId },
                 { withCredentials: true }
             );

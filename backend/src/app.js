@@ -1,4 +1,3 @@
-// create server 
 const express = require("express");
 const app = express();
 const cookieParser = require("cookie-parser");
@@ -7,22 +6,27 @@ const foodRoutes = require("./routes/food.routes");
 const foodPartnerRoutes = require("./routes/food-partner.routes");
 const cartRoutes = require("./routes/cart.routes");
 const cors = require("cors");
+const path = require("path");
 
-// middlewares 
-app.use(express.json()); // a middleware to make data readable from request body 
-app.use(cookieParser()); // a middleware to parse cookies 
-app.use(cors({origin: "http://localhost:5173", credentials: true})); // a middleware to handle CORS 
+// middlewares
+app.use(express.json());
+app.use(cookieParser());
+app.use(cors({ origin: true, credentials: true }));
 
-app.get("/", (req, res) => {
-    res.send("Hello World! from app.js");   
-});
-
-// using this middleware ,we are adding a prefix "/api/auth" to all the routes in auth.routes.js 
-// and now when user hits "/api/auth/user/register" , it will be redirected to "/user/register" in auth.routes.js 
-app.use("/api/auth", authRoutes); // add a prefix and redirect to routes present in authRoutes
+// API routes
+app.use("/api/auth", authRoutes);
 app.use("/api/food", foodRoutes);
 app.use("/api/food-partner", foodPartnerRoutes);
 app.use("/api/cart", cartRoutes);
 
-// we created server in app.js but will start it in server.js , so we export app
+// -------- SERVE FRONTEND --------
+
+const dirname1 = path.resolve();
+
+app.use(express.static(path.join(dirname1, "dist")));
+
+app.get(/.*/, (req, res) => {
+  res.sendFile(path.join(__dirname1, "dist", "index.html"));
+});
+
 module.exports = app;

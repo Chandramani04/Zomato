@@ -10,7 +10,7 @@ const FoodPartnerLogin = () => {
         e.preventDefault();
         const email = e.target.email.value;
         const password = e.target.password.value;
-        const response = await axios.post('http://localhost:3000/api/auth/foodpartner/login', {
+        const response = await axios.post('/api/auth/foodpartner/login', {
             email,
             password
         }, {

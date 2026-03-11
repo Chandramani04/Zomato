@@ -12,7 +12,7 @@ const UserRegister = () => {
         const password = e.target.password.value;
 
         const response = await axios.post(
-            "http://localhost:3000/api/auth/user/register",
+            "/api/auth/user/register",
             {
                 fullName: name,
                 email,

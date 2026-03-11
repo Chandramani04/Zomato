@@ -20,7 +20,7 @@ const Profile = () => {
     useEffect(() => {
         const fetchAuthStatus = async () => {
             try {
-                const res = await axios.get('http://localhost:3000/api/auth/me', { withCredentials: true });
+                const res = await axios.get('/api/auth/me', { withCredentials: true });
                 setLoggedInRole(res.data.role);
                 setLoggedInPartnerId(res.data.id);
             } catch {
@@ -54,7 +54,7 @@ const Profile = () => {
         formData.append("avatar", file);
 
         try {
-            const response = await axios.put('http://localhost:3000/api/food-partner/avatar', formData, {
+            const response = await axios.put('/api/food-partner/avatar', formData, {
                 withCredentials: true,
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
@@ -70,7 +70,7 @@ const Profile = () => {
     const handleDeleteReel = async (foodId) => {
         if (!window.confirm("Are you sure you want to delete this reel?")) return;
         try {
-            const response = await axios.delete(`http://localhost:3000/api/food/${foodId}`, {
+            const response = await axios.delete(`/api/food/${foodId}`, {
                 withCredentials: true
             });
             if (response.data.success) {
@@ -90,7 +90,7 @@ const Profile = () => {
         const fetchProfile = async () => {
             try {
                 setIsLoading(true);
-                const response = await axios.get(`http://localhost:3000/api/food-partner/${id}`, {
+                const response = await axios.get(`/api/food-partner/${id}`, {
                     withCredentials: true
                 });
 
@@ -280,7 +280,7 @@ const Profile = () => {
                                     }}
                                     onClick={async () => {
                                         try {
-                                            const res = await axios.post('http://localhost:3000/api/cart/add', {
+                                            const res = await axios.post('/api/cart/add', {
                                                 foodId: selectedFood._id
                                             }, { withCredentials: true });
                                             if (res.data.success) {
